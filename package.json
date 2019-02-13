@@ -1,6 +1,6 @@
 {
   "name": "obj2html",
-  "version": "0.1.0",
+  "version": "0.0.0",
   "description": "Convert 3D models of  Wavefront obj to HTML using CSS3 transforms.",
   "keywords": [
     "3d",
@@ -19,8 +19,8 @@
   },
   "license": "MIT",
   "author": "ukatama",
-  "main": "dist/index.ts",
-  "bin": "dist/index.ts",
+  "main": "index.js",
+  "bin": "index.js",
   "scripts": {
     "build": "tsc --build tsconfig.json",
     "lint": "eslint --ext .ts --fix src",
