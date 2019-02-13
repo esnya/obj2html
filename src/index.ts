@@ -28,7 +28,14 @@ async function obj2css3d(): Promise<void> {
   const {
     classPrefix,
     scale,
-  } = args as any as { classPrefix: string, scale: number };
+    number,
+    fontSize,
+  } = args as any as {
+    classPrefix: string;
+    scale: number;
+    number: boolean;
+    fontSize: number;
+  };
 
   const [filename] = args._;
   if (!filename) throw new Error('Input filename not provided');
@@ -77,7 +84,13 @@ body {
 .${classPrefix}-face svg {
   stroke: black;
   stroke-width: 1px;
-  fill: rgba(255, 128, 128, 1);
+  fill: red;
+}
+
+.${classPrefix}-face svg text {
+  stroke: none;
+  fill: black;
+  font-size: ${fontSize}px;
 }`;
   document.head.appendChild(svgStyle);
 
@@ -114,7 +127,7 @@ body {
     const translate = new Matrix4(identity).translate(center).invert();
     const rotate = new Matrix4(identity).lookAt({
       eye: new Vector3([0, 0, 0]),
-      center: normal,
+      center: normal.clone().scale(-1),
       up,
     });
 
@@ -177,22 +190,29 @@ body {
 
     const faceM = [
       rotate,
-      new Matrix4(identity).rotateX(Math.PI),
-      new Matrix4(identity).rotateZ(Math.PI),
-      // new Matrix4(identity).rotateX(180),
+      // new Matrix4(identity).rotateX(Math.PI),
+      // new Matrix4(identity).rotateZ(Math.PI),
     ].reduce((prev, curr) => prev.clone().multiplyLeft(curr));
     styles.push(`.${classPrefix}-face${i + 1} {
   transform: matrix3d(${faceM.toArray().join(', ')});
 }`);
 
     svg.appendChild(polygon);
+    if (number) {
+      const text = document.createElementNS(svgNS, 'text');
+      text.innerHTML = `${i + 1}`;
+      text.setAttributeNS(svgNS, 'x', `${width / 2}`);
+      text.setAttributeNS(svgNS, 'y', `${height / 2}`);
+      text.setAttributeNS(svgNS, 'text-anchor', 'middle');
+      text.setAttributeNS(svgNS, 'dominant-baseline', 'central');
+      svg.appendChild(text);
+    }
+
     faceDiv.appendChild(svg);
     container.appendChild(faceDiv);
 
     return transformedVertices;
-    // return transformedVertices.map(vertex => vertex.transform(mScaled));
   });
-  // await writeFile('tmp/test.obj', new Model(...transformed).toIndexed().toOBJ('test'));
 
   const style: HTMLStyleElement = document.createElement('style');
   style.innerHTML = styles.join('\r\n');
