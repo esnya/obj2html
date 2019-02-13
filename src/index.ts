@@ -1,19 +1,16 @@
 import { JSDOM } from 'jsdom';
 import { Vector3, Matrix4 } from 'math.gl';
-import args from './args';
-import { readFile, writeFile } from './fs';
 import IndexedModel from './IndexedModel';
 import Model from './Model';
 
-const identity = [
+const Identity = [
   1, 0, 0, 0,
   0, 1, 0, 0,
   0, 0, 1, 0,
   0, 0, 0, 1,
 ];
 
-const up = new Vector3([0, 0, 1]);
-const svgNS = 'http://www.w3.org/2000/svg';
+const SvgNS = 'http://www.w3.org/2000/svg';
 
 function enforceDefined<T>(value: T | null): T {
   if (value === null) throw new Error('Unexcepted null');
@@ -24,24 +21,32 @@ function average<T extends { add(a: T): T; scale(s: number): T }>(values: T[], z
   return values.reduce((p, c) => p.add(c), zero).scale(1.0 / values.length);
 }
 
-async function obj2css3d(): Promise<void> {
+export interface Options {
+  classPrefix?: string;
+  scale?: number;
+  number?: boolean;
+  fontSize?: number;
+}
+
+const DefaultOptions = {
+  classPrefix: 'obj',
+  scale: 100,
+  number: false,
+  fontSize: 20,
+};
+
+export default function obj2css3d(obj: string, options: Options = {}): JSDOM {
   const {
     classPrefix,
     scale,
     number,
     fontSize,
-  } = args as any as {
-    classPrefix: string;
-    scale: number;
-    number: boolean;
-    fontSize: number;
+  } = {
+    ...DefaultOptions,
+    ...options,
   };
 
-  const [filename] = args._;
-  if (!filename) throw new Error('Input filename not provided');
-
-  const data = await readFile(filename);
-  const indexed = IndexedModel.parseOBJ(data.toString('utf-8'));
+  const indexed = IndexedModel.parseOBJ(obj);
 
   const model = Model.fromIndexed(indexed);
 
@@ -123,12 +128,12 @@ body {
       new Vector3([0, 0, 0]),
     );
 
-    const scaleMatrix = new Matrix4(identity).scale([scale, scale, scale]);
-    const translate = new Matrix4(identity).translate(center).invert();
-    const rotate = new Matrix4(identity).lookAt({
+    const scaleMatrix = new Matrix4(Identity).scale([scale, scale, scale]);
+    const translate = new Matrix4(Identity).translate(center).invert();
+    const rotate = new Matrix4(Identity).lookAt({
       eye: new Vector3([0, 0, 0]),
       center: normal.clone().scale(-1),
-      up,
+      up: new Vector3([0, 0, 1]),
     });
 
     const m = [
@@ -154,18 +159,18 @@ body {
     const faceDiv = document.createElement('div');
     faceDiv.classList.add(`${classPrefix}-face`);
 
-    const svg = document.createElementNS(svgNS, 'svg');
+    const svg = document.createElementNS(SvgNS, 'svg');
 
     const width = xmax - xmin;
-    svg.setAttributeNS(svgNS, 'width', Math.ceil(width).toString());
+    svg.setAttributeNS(SvgNS, 'width', Math.ceil(width).toString());
 
     const height = ymax - ymin;
-    svg.setAttributeNS(svgNS, 'height', Math.ceil(height).toString());
+    svg.setAttributeNS(SvgNS, 'height', Math.ceil(height).toString());
 
-    const polygon = document.createElementNS(svgNS, 'polygon');
+    const polygon = document.createElementNS(SvgNS, 'polygon');
 
     const points = positions.map(v => [v.x - xmin, v.y - ymin].join(',')).join(' ');
-    polygon.setAttributeNS(svgNS, 'points', points);
+    polygon.setAttributeNS(SvgNS, 'points', points);
 
     const scaledCenter = average(
       face.map(v => v.position).filter(v => v).map(enforceDefined).map(v => v.clone().scale(scale)),
@@ -173,7 +178,7 @@ body {
     );
     const mSVG = [
       rotate.clone().invert(),
-      new Matrix4(identity).translate(scaledCenter),
+      new Matrix4(Identity).translate(scaledCenter),
     ].reduce((prev, curr) => prev.clone().multiplyLeft(curr));
 
     const faceSelector = `.${classPrefix}-face:nth-child(${i + 1})`;
@@ -190,8 +195,8 @@ body {
 
     const faceM = [
       rotate,
-      // new Matrix4(identity).rotateX(Math.PI),
-      // new Matrix4(identity).rotateZ(Math.PI),
+      // new Matrix4(Identity).rotateX(Math.PI),
+      // new Matrix4(Identity).rotateZ(Math.PI),
     ].reduce((prev, curr) => prev.clone().multiplyLeft(curr));
     styles.push(`.${classPrefix}-face${i + 1} {
   transform: matrix3d(${faceM.toArray().join(', ')});
@@ -199,12 +204,12 @@ body {
 
     svg.appendChild(polygon);
     if (number) {
-      const text = document.createElementNS(svgNS, 'text');
+      const text = document.createElementNS(SvgNS, 'text');
       text.innerHTML = `${i + 1}`;
-      text.setAttributeNS(svgNS, 'x', `${width / 2}`);
-      text.setAttributeNS(svgNS, 'y', `${height / 2}`);
-      text.setAttributeNS(svgNS, 'text-anchor', 'middle');
-      text.setAttributeNS(svgNS, 'dominant-baseline', 'central');
+      text.setAttributeNS(SvgNS, 'x', `${width / 2}`);
+      text.setAttributeNS(SvgNS, 'y', `${height / 2}`);
+      text.setAttributeNS(SvgNS, 'text-anchor', 'middle');
+      text.setAttributeNS(SvgNS, 'dominant-baseline', 'central');
       svg.appendChild(text);
     }
 
@@ -218,8 +223,5 @@ body {
   style.innerHTML = styles.join('\r\n');
   document.head.appendChild(style);
 
-  await writeFile(args.o, `<!DOCTYPE html>\r\n${document.documentElement.outerHTML}`);
+  return dom;
 }
-
-// eslint-disable-next-line no-console
-obj2css3d().then(() => console.log('Generated!'), e => console.error(e));

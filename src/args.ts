@@ -1,4 +1,10 @@
 import yargs from 'yargs';
+import { Options } from '.';
+
+interface Args extends Options {
+  _: string[];
+  output?: string;
+}
 
 export default yargs
   .option('c', {
@@ -21,7 +27,6 @@ export default yargs
   })
   .option('o', {
     alias: 'output',
-    default: '.',
     description: 'Path for output HTML file',
     type: 'string',
   })
@@ -31,4 +36,5 @@ export default yargs
     description: 'Scale',
     type: 'number',
   })
-  .argv;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  .argv as any as Args;
