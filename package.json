@@ -1,20 +1,21 @@
 {
-  "name": "obj2css3d",
-  "version": "0.0.0",
-  "description": "",
+  "name": "obj2html",
+  "version": "0.1.0",
+  "description": "Convert 3D models of  Wavefront obj to HTML using CSS3 transforms.",
   "keywords": [
-    "3D",
+    "3d",
+    "convert",
     "css",
-    "css3d",
+    "html",
     "obj"
   ],
-  "homepage": "https://github.com/ukatama/obj2css3d.bit#readme",
+  "homepage": "https://github.com/ukatama/obj2html#readme",
   "bugs": {
-    "url": "https://github.com/ukatama/obj2css3d.bit/issues"
+    "url": "https://github.com/ukatama/obj2html/issues"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ukatama/obj2css3d.bit.git"
+    "url": "git+https://github.com/ukatama/obj2html.git"
   },
   "license": "MIT",
   "author": "ukatama",
