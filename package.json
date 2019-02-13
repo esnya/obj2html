@@ -21,7 +21,7 @@
   "main": "dist/index.ts",
   "bin": "dist/index.ts",
   "scripts": {
-    "build": "tsc --outDir dist src/index.ts",
+    "build": "tsc --build tsconfig.json",
     "lint": "eslint --ext .ts --fix src",
     "start": "ts-node-dev src",
     "test": "run-s lint build",
