@@ -1,7 +1,7 @@
 import { basename } from 'path';
 import args from './args';
 import { readFile, writeFile } from './fs';
-import obj2html from '../obj2html';
+import obj2html from '.';
 
 async function runCLI(): Promise<void> {
   const [filename] = args._;

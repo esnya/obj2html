@@ -23,10 +23,11 @@
   "bin": "bin.js",
   "scripts": {
     "build": "tsc --build tsconfig.json",
-    "lint": "eslint --ext .ts --fix src",
-    "start": "ts-node-dev src",
+    "lint": "eslint --ext .ts --fix ts",
+    "prepublish": "run-s lint build",
+    "start": "ts-node-dev ts/cli.ts",
     "test": "run-s lint build",
-    "watch": "ts-node-dev --respawn src"
+    "watch": "ts-node-dev --respawn ts/cli.ts"
   },
   "dependencies": {
     "jsdom": "^13.2.0",

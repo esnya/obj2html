@@ -14,10 +14,10 @@ $ obj2html -o model.html model.obj
 ```
 
 ### API
-#### TypeScript
-```ts
+#### JavaScript
+```js
 import { readFileSync, writeFileSync } from 'fs';
-import obj2html from 'obj2html/obj2html';
+import obj2html from 'obj2html';
 
 const obj = readFileSync('src.obj').toString('utf-8');
 
@@ -31,13 +31,10 @@ const dom = obj2html(obj, {
 writeFileSync('dst.html', `<!DOCTYPE html>\r\n${dom.window.document.documentElement.outerHTML}`);
 ```
 
-#### JavaScript
-```js
-const {
-  readFileSync,
-  writeFileSync,
-} = require('fs');
-const obj2html = require('obj2html').default;
+#### TypeScript
+```ts
+import { readFileSync, writeFileSync } from 'fs';
+import obj2html from 'obj2html/ts';
 
 const obj = readFileSync('src.obj').toString('utf-8');
 
