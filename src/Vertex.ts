@@ -1,4 +1,4 @@
-import { Vector3, Vector2, Matrix4 } from "math.gl";
+import { Vector3, Vector2, Matrix4 } from 'math.gl';
 
 const identity = [
   1, 0, 0, 0,
@@ -8,17 +8,17 @@ const identity = [
 ];
 
 export default class Vertex {
-  position: Vector3 | null;
-  normal: Vector3 | null;
-  uv: Vector2 | null;
+  public position: Vector3 | null;
+  public normal: Vector3 | null;
+  public uv: Vector2 | null;
 
-  constructor(position: Vector3 | null, normal: Vector3 | null, uv: Vector2 | null) {
+  public constructor(position: Vector3 | null, normal: Vector3 | null, uv: Vector2 | null) {
     this.position = position;
     this.normal = normal;
     this.uv = uv;
   }
 
-  transform(matrix: Matrix4) {
+  public transform(matrix: Matrix4): Vertex {
     const position = this.position && matrix.transformPoint(this.position);
 
     const nm1 = this.normal && this.position && new Matrix4(identity).translate(this.position);

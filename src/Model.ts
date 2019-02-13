@@ -1,7 +1,6 @@
-import Vertex from "./Vertex";
-import IndexedModel from "./IndexedModel";
-import IndexList from "./IndexList";
-import { Vector2, Vector3 } from "math.gl";
+import { Vector2, Vector3 } from 'math.gl';
+import Vertex from './Vertex';
+import IndexedModel from './IndexedModel';
 
 function mapIndex<T>(index: number | null, list: T[]): T | null {
   if (index === null || index >= list.length) return null;
@@ -24,27 +23,27 @@ function objectEquals<T extends HasEquals<T>>(a: T, b: T): boolean {
 }
 
 export default class Model extends Array<Vertex[]> {
-  toIndexed(): IndexedModel {
+  public toIndexed(): IndexedModel {
     const vertices: Vector3[] = [];
     const normals: Vector3[] = [];
     const uvs: Vector2[] = [];
 
-    const faces = this.map(face => face.map((vertex) => ({
-        vertex: vertex.position && findIndexOrInsert(vertices, vertex.position, objectEquals),
-        normal: vertex.normal && findIndexOrInsert(normals, vertex.normal, objectEquals),
-        uv: vertex.uv && findIndexOrInsert(normals, vertex.uv, objectEquals),
+    const faces = this.map(face => face.map(vertex => ({
+      vertex: vertex.position && findIndexOrInsert(vertices, vertex.position, objectEquals),
+      normal: vertex.normal && findIndexOrInsert(normals, vertex.normal, objectEquals),
+      uv: vertex.uv && findIndexOrInsert(normals, vertex.uv, objectEquals),
     })));
 
     return new IndexedModel(faces, vertices, normals, uvs);
   }
 
-  static fromIndexed(indexed: IndexedModel): Model {
+  public static fromIndexed(indexed: IndexedModel): Model {
     const {
       vertices,
       normals,
       uvs,
     } = indexed;
-  
+
     const faces = indexed.faces.map(face => face.map(indexList => new Vertex(
       mapIndex(indexList.vertex, vertices),
       mapIndex(indexList.normal, normals),

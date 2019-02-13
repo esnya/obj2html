@@ -1,6 +1,6 @@
 import chunk from 'lodash/chunk';
-import IndexList from "./IndexList";
-import { Vector3, Vector2 } from "math.gl";
+import { Vector3, Vector2 } from 'math.gl';
+import IndexList from './IndexList';
 
 const linePattern = /^(v|vn|uv|f) (.*)$/;
 const valuePattern = /([^ ]+)*/g;
@@ -22,7 +22,7 @@ function parseFace(data: string): IndexList[] {
     const vertex = parseIndex(n[1]);
     const uv = parseIndex(n[2]);
     const normal = parseIndex(n[3]);
-  
+
     return {
       normal,
       uv,
@@ -39,8 +39,8 @@ function parseVectors(pattern: RegExp): (data: string) => number[] {
     return m.slice(1).map(value => Number(value));
   };
 }
-const parseVector2s = parseVectors(/^([0-9\-\.]+) ([0-9\-\.]+)$/);
-const parseVector3s = parseVectors(/^([0-9\-\.]+) ([0-9\-\.]+) ([0-9\-\.]+)$/);
+const parseVector2s = parseVectors(/^([0-9\-.]+) ([0-9\-.]+)$/);
+const parseVector3s = parseVectors(/^([0-9\-.]+) ([0-9\-.]+) ([0-9\-.]+)$/);
 
 function indexToOBJIndex(index: number | null): string {
   if (index === null) return '';
@@ -48,19 +48,24 @@ function indexToOBJIndex(index: number | null): string {
 }
 
 export default class IndexedModel {
-  faces: IndexList[][];
-  vertices: Vector3[];
-  normals: Vector3[];
-  uvs: Vector2[];
+  public faces: IndexList[][];
+  public vertices: Vector3[];
+  public normals: Vector3[];
+  public uvs: Vector2[];
 
-  constructor(faces: IndexList[][], vertices: Vector3[], normals: Vector3[], uvs: Vector2[]) {
+  public constructor(
+    faces: IndexList[][],
+    vertices: Vector3[],
+    normals: Vector3[],
+    uvs: Vector2[],
+  ) {
     this.faces = faces;
     this.vertices = vertices;
     this.normals = normals;
     this.uvs = uvs;
   }
 
-  toOBJ(name: string): string {
+  public toOBJ(name: string): string {
     const vertices = this.vertices.map(v => `v ${v.x} ${v.y} ${v.z}`);
     const normals = this.normals.map(v => `vn ${v.x} ${v.y} ${v.z}`);
     const uvs = this.uvs.map(v => `uv ${v.x} ${v.y}`);
@@ -78,20 +83,20 @@ export default class IndexedModel {
     ].join('\n');
   }
 
-  static parseOBJ(obj: string): IndexedModel {
+  public static parseOBJ(obj: string): IndexedModel {
     const faces: IndexList[][] = [];
     const normals: Vector3[] = [];
     const uvs: Vector2[] = [];
     const vertices: Vector3[] = [];
-  
+
     const lines = obj.split(/\n/g);
     lines.forEach((line) => {
       const m = line.match(linePattern);
       if (!m) return;
-  
+
       const type = m[1];
       const data = m[2];
-  
+
       switch (type) {
         case 'v':
           vertices.push(new Vector3(parseVector3s(data)));
@@ -105,9 +110,11 @@ export default class IndexedModel {
         case 'f':
           faces.push(parseFace(data));
           break;
+        default:
+          break;
       }
     });
-  
+
     return new IndexedModel(
       faces,
       vertices,
