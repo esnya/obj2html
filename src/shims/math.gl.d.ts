@@ -11,6 +11,9 @@ declare module 'math.gl' {
     multiplyLeft(m: Matrix4): Matrix4;
     multiplyRight(m: Matrix4): Matrix4;
     scale(scale: number[]): Matrix4;
+    rotateX(angle: number): Matrix4;
+    rotateY(angle: number): Matrix4;
+    rotateZ(angle: number): Matrix4;
     toArray(): number[];
     lookAt(optios: { eye: Vector3, center: Vector3, up: Vector3 }): Matrix4;
   }

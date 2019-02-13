@@ -5,9 +5,6 @@ import { readFile, writeFile } from './fs';
 import IndexedModel from './IndexedModel';
 import Model from './Model';
 
-const classPrefix = 'obj';
-const scale = 100;
-
 const identity = [
   1, 0, 0, 0,
   0, 1, 0, 0,
@@ -28,6 +25,11 @@ function average<T extends { add(a: T): T; scale(s: number): T }>(values: T[], z
 }
 
 async function obj2css3d(): Promise<void> {
+  const {
+    classPrefix,
+    scale,
+  } = args as any as { classPrefix: string, scale: number };
+
   const [filename] = args._;
   if (!filename) throw new Error('Input filename not provided');
 
@@ -48,8 +50,8 @@ async function obj2css3d(): Promise<void> {
 /* Animation */
 
 @keyframes rotation {
-  0% { transform: rotateX(180deg) rotateY(0); }
-  100% { transform: rotateX(180deg) rotateY(360deg); }
+  0% { transform: rotateY(0); }
+  100% { transform: rotateY(360deg); }
 }
 
 body {
@@ -57,6 +59,7 @@ body {
 }
 
 .${classPrefix} {
+  transition: transform 1s ease-in-out;
   animation-name: rotation;
   animation-duration: 10s;
   animation-iteration-count: infinite;
@@ -66,12 +69,15 @@ body {
 
   const svgStyle = document.createElement('style');
   svgStyle.innerHTML = `
-/* SVG Styles */
+/* Styles */
+.${classPrefix} {
+  backface-visibility: hidden;
+}
 
 .${classPrefix}-face svg {
   stroke: black;
   stroke-width: 1px;
-  fill: rgba(255, 0, 0, 0.5);
+  fill: rgba(255, 128, 128, 1);
 }`;
   document.head.appendChild(svgStyle);
 
@@ -81,11 +87,8 @@ body {
   transform-origin: 0 0;
   position: relative;
 }`);
-  styles.push(`body, .${classPrefix}, .${classPrefix} * {
+  styles.push(`.${classPrefix}, .${classPrefix} * {
   transform-style: preserve-3d;
-}`);
-  styles.push(`@keyframes debug {
-  0% { transform: translate3d(0, 0, 0); }
 }`);
   styles.push(`.${classPrefix}-face {
   position: absolute;
@@ -168,13 +171,19 @@ body {
   transform: matrix3d(${mSVG.toArray().join(', ')});
 }`);
 
-    styles.push(`${faceSelector} svg{
+    styles.push(`${faceSelector} svg {
   transform: translate3d(${xmin}px, ${ymin}px, 0);
 }`);
 
+    const faceM = [
+      rotate,
+      new Matrix4(identity).rotateX(Math.PI),
+      new Matrix4(identity).rotateZ(Math.PI),
+      // new Matrix4(identity).rotateX(180),
+    ].reduce((prev, curr) => prev.clone().multiplyLeft(curr));
     styles.push(`.${classPrefix}-face${i + 1} {
-  transform: matrix3d(${rotate.toArray().join(', ')});
-}`)
+  transform: matrix3d(${faceM.toArray().join(', ')});
+}`);
 
     svg.appendChild(polygon);
     faceDiv.appendChild(svg);
