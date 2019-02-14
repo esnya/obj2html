@@ -204,10 +204,11 @@ body {
 
     svg.appendChild(polygon);
     if (number) {
+      const tc = average(positions, new Vector3([0, 0, 0]));
       const text = document.createElementNS(SvgNS, 'text');
       text.innerHTML = `${i + 1}`;
-      text.setAttributeNS(SvgNS, 'x', `${width / 2}`);
-      text.setAttributeNS(SvgNS, 'y', `${height / 2}`);
+      text.setAttributeNS(SvgNS, 'x', `${tc.x - xmin}`);
+      text.setAttributeNS(SvgNS, 'y', `${tc.y - ymin}`);
       text.setAttributeNS(SvgNS, 'text-anchor', 'middle');
       text.setAttributeNS(SvgNS, 'dominant-baseline', 'central');
       svg.appendChild(text);
