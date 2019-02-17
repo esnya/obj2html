@@ -3,6 +3,7 @@ node_js:
 - lts/*
 - node
 script: npm run ci:script
+after_success: test $TRAVIS_NODE_VERSION = node && npm run coveralls
 before_deploy: npm run ci:before_deploy
 deploy:
   provider: npm

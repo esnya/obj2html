@@ -34,7 +34,7 @@ describe('obj2html', () => {
     });
   });
 
-  it('returns instance of JSDOM', () => {
+  it('returns document instanceof JSDOM', () => {
     expect(dom).to.be.an.instanceof(JSDOM);
   });
 
