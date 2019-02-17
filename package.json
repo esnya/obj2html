@@ -1,6 +1,6 @@
 {
   "name": "obj2html",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Convert 3D models of  Wavefront obj to HTML using CSS3 transforms.",
   "keywords": [
     "3d",
