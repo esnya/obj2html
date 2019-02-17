@@ -1,5 +1,12 @@
 # obj2html
 
+![](https://img.shields.io/npm/v/obj2html.svg?style=flat-square)
+![](https://img.shields.io/npm/dw/obj2html.svg?style=flat-square)
+![](https://img.shields.io/travis/ukatama/obj2html.svg?style=flat-square)
+![](https://img.shields.io/coveralls/github/ukatama/obj2html.svg?style=flat-square)
+![](https://img.shields.io/david/ukatama/obj2html.svg?style=flat-square)
+![](https://img.shields.io/david/dev/ukatama/obj2html.svg?style=flat-square)
+
 Convert 3D models of Wavefront obj to HTML using CSS3 transforms.
 
 ## Install
