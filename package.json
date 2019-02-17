@@ -24,7 +24,7 @@
   "scripts": {
     "build": "tsc --build tsconfig.json",
     "ci:before_deploy": "npm run production:build",
-    "ci:script": "run-s lint test build ci:coveralls",
+    "ci:script": "run-s lint test build coveralls",
     "coveralls": "nyc report --reporter=text-lcov | coveralls",
     "lint": "eslint --ext .ts --fix ts tests",
     "production:build": "cross-env NODE_ENV=production npm run build",
