@@ -23,6 +23,8 @@
   "bin": "bin.js",
   "scripts": {
     "build": "tsc --build tsconfig.json",
+    "ci:script": "run-s lint build",
+    "ci:before_deploy": "npm run production:build",
     "lint": "eslint --ext .ts --fix ts",
     "prepublish": "run-s lint production:build",
     "production:build": "cross-env NODE_ENV=production npm run build",

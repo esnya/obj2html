@@ -2,7 +2,8 @@ language: node_js
 node_js:
 - lts/*
 - node
-before_deploy: npm run production:build
+script: npm run ci:script
+before_deploy: npm run ci:before_deploy
 deploy:
   provider: npm
   email:
