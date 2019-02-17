@@ -52,5 +52,9 @@ describe('obj2html', () => {
   it('returns document contains style elements', () => {
     const styles = dom.window.document.head.querySelectorAll('style');
     expect(styles).has.length(3);
+
+    styles.forEach((style) => {
+      expect(style.type).to.equals('text/css');
+    });
   });
 });

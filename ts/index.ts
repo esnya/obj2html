@@ -58,7 +58,7 @@ export default function obj2css3d(obj: string, options: Options = {}): JSDOM {
   document.head.appendChild(charset);
 
   const animationStyle = document.createElement('style');
-  animationStyle.type = 'text/html';
+  animationStyle.type = 'text/css';
   animationStyle.innerHTML = `
 /* Animation */
 
@@ -81,7 +81,7 @@ body {
   document.head.appendChild(animationStyle);
 
   const svgStyle = document.createElement('style');
-  svgStyle.type = 'text/html';
+  svgStyle.type = 'text/css';
   svgStyle.innerHTML = `
 /* Styles */
 .${classPrefix} {
@@ -223,7 +223,7 @@ body {
   });
 
   const style: HTMLStyleElement = document.createElement('style');
-  style.type = 'text/html';
+  style.type = 'text/css';
   style.innerHTML = styles.join('\r\n');
   document.head.appendChild(style);
 
