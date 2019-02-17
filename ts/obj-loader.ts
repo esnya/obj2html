@@ -1,9 +1,16 @@
 import shortid from 'shortid';
+import { loader as WebpackLoader } from 'webpack';
 import { getOptions } from 'loader-utils';
 import obj2html from '.';
 
-export default function loader(content): void {
+function escape(src: string): string {
+  return src.replace(/'/g, '\\\'').replace(/\n/g, '\\n');
+}
+
+export default function loader(this: WebpackLoader.LoaderContext, content: string): void {
   const callback = this.async();
+  if (!callback) throw new Error('Failed to compile OBJ');
+
   const options = getOptions(this) || {};
 
   const classPrefix = `${options.classPrefix || 'obj2html'}-${shortid()}`;
@@ -12,15 +19,17 @@ export default function loader(content): void {
     classPrefix,
   }));
 
-  const body = html.window.document.body.querySelector(`.${classPrefix}`).outerHTML;
+  const body = html.window.document.body.querySelector(`.${classPrefix}`);
+  if (!body) return callback(new Error('Failed to compile OBJ'));
 
-  const style = html.window.document.head.querySelector('style:last-child').outerHTML;
+  const style = html.window.document.head.querySelector('style:last-child');
+  if (!style) return callback(new Error('Failed to compile OBJ'));
 
   const source = `module.exports = {
     classPrefix: '${classPrefix.replace(/'/g, '\\\'')}',
-    body: '${body.replace(/'/g, '\\\'').replace(/\n/g, '\\n')}',
-    style: '${style.replace(/'/g, '\\\'').replace(/\n/g, '\\n')}',
+    body: '${escape(body.outerHTML)}',
+    style: '${escape(style.outerHTML)}',
   }`;
 
-  callback(null, source);
+  return callback(null, source);
 }
