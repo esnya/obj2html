@@ -33,7 +33,7 @@
     "watch": "ts-node-dev --respawn ts/cli.ts"
   },
   "dependencies": {
-    "jsdom": "^13.2.0",
+    "jsdom": "^16.5.0",
     "loader-utils": "^1.2.3",
     "lodash": "^4.17.11",
     "math.gl": "^2.3.0",
